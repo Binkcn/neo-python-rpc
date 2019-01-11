@@ -50,31 +50,31 @@ class RPCClient():
         """
         return self._call_endpoint(GET_BLOCK_COUNT, id=id, endpoint=endpoint)
 
-    def get_asset(self, asset_hash, id=None, endpoint=None):
+    def get_asset(self, asset_id, id=None, endpoint=None):
         """
         Get an asset by its hash
         Args:
-            asset_hash: (str) asset to lookup, example would be 'c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b'
+            asset_id: (str) asset to lookup, example would be 'c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b'
             id: (int, optional) id to use for response tracking
             endpoint: (RPCEndpoint, optional) endpoint to specify to use
 
         Returns:
             json object of the result or the error encountered in the RPC call
         """
-        return self._call_endpoint(GET_ASSET_STATE, params=[asset_hash], id=id, endpoint=endpoint)
+        return self._call_endpoint(GET_ASSET_STATE, params=[asset_id], id=id, endpoint=endpoint)
 
-    def get_balance(self, asset_hash, id=None, endpoint=None):
+    def get_balance(self, asset_id, id=None, endpoint=None):
         """
         Get balance by asset hash
         Args:
-            asset_hash: (str) asset to lookup, example would be 'c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b'
+            asset_id: (str) asset to lookup, example would be 'c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b'
             id: (int, optional) id to use for response tracking
             endpoint: (RPCEndpoint, optional) endpoint to specify to use
 
         Returns:
             json object of the result or the error encountered in the RPC call
         """
-        return self._call_endpoint(GET_BALANCE, params=[asset_hash], id=id, endpoint=endpoint)
+        return self._call_endpoint(GET_BALANCE, params=[asset_id], id=id, endpoint=endpoint)
 
     def get_best_blockhash(self, id=None, endpoint=None):
         """
@@ -255,6 +255,31 @@ class RPCClient():
         """
         return self._call_endpoint(SEND_TX, params=[serialized_tx], id=id, endpoint=endpoint)
 
+    def send_to_address(self, asset_id, address, value, fee=0, change_address=None, id=None, endpoint=None):
+        """
+        Submits a tx to the network
+
+        Args:
+            asset_id: (str) asset identifier, example would be 'c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b'
+            address: (str) payment address ( in format 'AXjaFSP23Jkbe6Pk9pPGT6NBDs1HVdqaXK')
+            value: (int) amount transferred
+            fee: (float, optional) It defaults to 0, and can be set to a minimum of 0.00000001.
+            change_address: (str, optional) default is the first standard address in the wallet.
+            id: (int, optional) id to use for response tracking
+            endpoint: (RPCEndpoint, optional) endpoint to specify to use
+
+        Returns:
+            json object of the result or the error encountered in the RPC call
+
+        """
+
+        params = [asset_id, address, value, fee]
+
+        if change_address:
+            params.append(change_address)
+
+        return self._call_endpoint(SEND_TO_ADDRESS, params=params, id=id, endpoint=endpoint)
+
     def validate_addr(self, address, id=None, endpoint=None):
         """
         returns whether or not addr string is valid
@@ -376,6 +401,7 @@ INVOKE_SCRIPT = 'invokescript'
 
 # send
 SEND_TX = 'sendrawtransaction'
+SEND_TO_ADDRESS = 'sendtoaddress'
 SUBMIT_BLOCK = 'submitblock'
 
 # validate
